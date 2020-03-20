@@ -1,7 +1,7 @@
 {
   "name": "abci",
-  "version": "6.0.0",
-  "description": "Tendermint ABCI server",
+  "version": "1.0.0",
+  "description": "JS ABCI bindings",
   "main": "index.js",
   "scripts": {
     "test": "standard src/*.js test/*.js && nyc ava test/connection.js test/server.js test/integration.js",
