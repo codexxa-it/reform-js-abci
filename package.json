@@ -1,5 +1,5 @@
 {
-  "name": "abci",
+  "name": "reform-js-abci",
   "version": "1.0.0",
   "description": "JS ABCI bindings",
   "main": "index.js",
