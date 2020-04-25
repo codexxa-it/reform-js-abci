@@ -5,11 +5,11 @@ const debug = require('debug')('abci')
 const Connection = require('./connection.js')
 
 function createServer (app) {
-  let server = net.createServer((client) => {
+  const server = net.createServer((client) => {
     client.name = `${client.remoteAddress}:${client.remotePort}`
 
-    let conn = new Connection(client, async (req, cb) => {
-      let [ type ] = Object.keys(req)
+    const conn = new Connection(client, async (req, cb) => {
+      const [type] = Object.keys(req)
       let message = req[type]
 
       // special messages
@@ -21,14 +21,15 @@ function createServer (app) {
         return cb()
       }
 
-      let succeed = (response) => {
+      const succeed = (response) => {
         // respond to client
-        let message = { [type]: response }
+        const message = { [type]: response }
         conn.write(message)
+
         cb()
       }
 
-      let fail = (err) => {
+      const fail = (err) => {
         // if app throws an error, send an 'exception' response
         // and close the connection
         debug(`ABCI error on "${type}":`, err)
@@ -44,14 +45,18 @@ function createServer (app) {
 
       // call method
       try {
-        let res = app[type](message)
+//        (async () => {
+          let res = app[type](message)
 
-        // method can optionally be async
-        if (res instanceof Promise) {
-          res = await res
-        }
+          // method can optionally be async
+          if (res instanceof Promise) {
+              res = await res            
+          }
 
-        succeed(res)
+          succeed(res)
+//        }).catch(err => {
+//          fail(err);
+//        });
       } catch (err) {
         fail(err)
       }

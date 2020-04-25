@@ -1,13 +1,13 @@
-let createABCIServer = require('abci')
+const createABCIServer = require('abci')
 
 // turn on debug logging
 require('debug').enable('abci*')
 
-let state = {
+const state = {
   count: 0
 }
 
-let handlers = {
+const handlers = {
   info (request) {
     return {
       data: 'Node.js counter app',
@@ -18,8 +18,8 @@ let handlers = {
   },
 
   checkTx (request) {
-    let tx = padTx(request.tx)
-    let number = tx.readUInt32BE(0)
+    const tx = padTx(request.tx)
+    const number = tx.readUInt32BE(0)
     if (number !== state.count) {
       return { code: 1, log: 'tx does not match count' }
     }
@@ -27,8 +27,8 @@ let handlers = {
   },
 
   deliverTx (request) {
-    let tx = padTx(request.tx)
-    let number = tx.readUInt32BE(0)
+    const tx = padTx(request.tx)
+    const number = tx.readUInt32BE(0)
     if (number !== state.count) {
       return { code: 1, log: 'tx does not match count' }
     }
@@ -42,12 +42,12 @@ let handlers = {
 
 // make sure the transaction data is 4 bytes long
 function padTx (tx) {
-  let buf = Buffer.alloc(4)
+  const buf = Buffer.alloc(4)
   tx.copy(buf, 4 - tx.length)
   return buf
 }
 
-let port = 26658
+const port = 26658
 createABCIServer(handlers).listen(port, () => {
   console.log(`listening on port ${port}`)
 })

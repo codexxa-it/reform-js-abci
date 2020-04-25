@@ -1,10 +1,10 @@
-let EventEmitter = require('events')
+const EventEmitter = require('events')
 
 function mockStream () {
-  let stream = new EventEmitter()
+  const stream = new EventEmitter()
   stream.sent = Buffer.alloc(0)
   stream.write = (data) => {
-    stream.sent = Buffer.concat([ stream.sent, data ])
+    stream.sent = Buffer.concat([stream.sent, data])
   }
   stream.pause = () => {}
   stream.resume = () => {}

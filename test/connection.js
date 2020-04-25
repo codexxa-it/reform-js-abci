@@ -1,22 +1,22 @@
-let test = require('ava')
-let Connection = require('../src/connection.js')
-let fixtures = require('./fixtures.js')
-let { mockStream, wait } = require('./common.js')
+const test = require('ava')
+const Connection = require('../src/connection.js')
+const fixtures = require('./fixtures.js')
+const { mockStream, wait } = require('./common.js')
 
 test('create connection', (t) => {
-  let stream = mockStream()
-  let connection = new Connection(stream)
+  const stream = mockStream()
+  const connection = new Connection(stream)
   t.true(connection instanceof Connection, 'created connection')
 })
 
 test('receive requests', async (t) => {
-  let received = []
-  let onMessage = (message, cb) => {
+  const received = []
+  const onMessage = (message, cb) => {
     received.push(message)
     cb()
   }
-  let stream = mockStream()
-  let connection = new Connection(stream, onMessage)
+  const stream = mockStream()
+  const connection = new Connection(stream, onMessage)
   t.true(connection instanceof Connection, 'created connection')
 
   stream.emit('data', fixtures.multiRequestBytes)
@@ -30,12 +30,12 @@ test('receive requests', async (t) => {
 test('requests not emitted while waiting for handler', async (t) => {
   let numMessages = 0
   let onMessageCb
-  let onMessage = (message, cb) => {
+  const onMessage = (message, cb) => {
     numMessages += 1
     onMessageCb = cb
   }
-  let stream = mockStream()
-  let connection = new Connection(stream, onMessage)
+  const stream = mockStream()
+  const connection = new Connection(stream, onMessage)
   t.true(connection instanceof Connection, 'created connection')
 
   stream.emit('data', fixtures.multiRequestBytes)
@@ -53,9 +53,9 @@ test('requests not emitted while waiting for handler', async (t) => {
 })
 
 test('send responses', async (t) => {
-  let onMessage = (message, cb) => cb()
-  let stream = mockStream()
-  let connection = new Connection(stream, onMessage)
+  const onMessage = (message, cb) => cb()
+  const stream = mockStream()
+  const connection = new Connection(stream, onMessage)
 
   connection.write(fixtures.infoResponse)
   await wait()
@@ -66,22 +66,22 @@ test('send responses', async (t) => {
 })
 
 test('close', (t) => {
-  let onMessage = (message, cb) => cb()
-  let stream = mockStream()
+  const onMessage = (message, cb) => cb()
+  const stream = mockStream()
 
   let destroyCalled = false
   stream.destroy = () => { destroyCalled = true }
 
-  let connection = new Connection(stream, onMessage)
+  const connection = new Connection(stream, onMessage)
   connection.close()
   t.true(destroyCalled)
 })
 
 test('write errors are emitted', async (t) => {
-  let onMessage = (message, cb) => cb()
-  let stream = mockStream()
+  const onMessage = (message, cb) => cb()
+  const stream = mockStream()
 
-  let connection = new Connection(stream, onMessage)
+  const connection = new Connection(stream, onMessage)
   connection.on('error', (err) => {
     t.is(err.message, "Cannot read property 'exception' of undefined")
   })

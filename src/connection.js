@@ -19,11 +19,17 @@ class Connection extends EventEmitter {
 
     stream.on('data', this.onData.bind(this))
     stream.on('error', this.error.bind(this))
+    stream.on('finish', this.finish.bind(this))
   }
 
   error (err) {
     this.close()
     this.emit('error', err)
+  }
+
+  finish (f) {
+    this.close()
+    this.emit('finish', f)
   }
 
   async onData (data) {
@@ -33,8 +39,8 @@ class Connection extends EventEmitter {
   }
 
   maybeReadNextMessage () {
-    let length = varint.decode(this.recvBuf.slice(0, 8)) >> 1
-    let lengthLength = varint.decode.bytes
+    const length = varint.decode(this.recvBuf.slice(0, 8)) >> 1
+    const lengthLength = varint.decode.bytes
 
     if (length > MAX_MESSAGE_SIZE) {
       this.error(Error('message is longer than maximum size'))
@@ -46,13 +52,13 @@ class Connection extends EventEmitter {
       return
     }
 
-    let messageBytes = this.recvBuf.slice(
+    const messageBytes = this.recvBuf.slice(
       lengthLength,
       lengthLength + length
     )
     this.recvBuf.consume(lengthLength + length)
 
-    let message = Request.decode(messageBytes)
+    const message = Request.decode(messageBytes)
 
     this.waiting = true
     this.stream.pause()
@@ -73,8 +79,10 @@ class Connection extends EventEmitter {
   }
 
   write (message) {
-    this._write(message)
-      .catch((err) => this.emit('error', err))
+    // (async () => {
+      this._write(message)
+        .catch((err) => this.emit('error', err))
+    // }).catch((err) => this.emit('error', err))
   }
 
   async _write (message) {
@@ -83,8 +91,8 @@ class Connection extends EventEmitter {
     if (debug.enabled && !message.flush) {
       debug('>>', Response.fromObject(message))
     }
-    let messageBytes = Response.encode(message).finish()
-    let lengthBytes = varint.encode(messageBytes.length << 1)
+    const messageBytes = Response.encode(message).finish()
+    const lengthBytes = varint.encode(messageBytes.length << 1)
     this.stream.write(Buffer.from(lengthBytes))
     this.stream.write(messageBytes)
   }

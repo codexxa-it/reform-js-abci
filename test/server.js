@@ -1,19 +1,19 @@
-let net = require('net')
-let test = require('ava')
-let Connection = require('../src/connection.js')
-let { createServer } = require('..')
-let fixtures = require('./fixtures.js')
-let { mockStream, wait } = require('./common.js')
+const net = require('net')
+const test = require('ava')
+const Connection = require('../src/connection.js')
+const { createServer } = require('..')
+const fixtures = require('./fixtures.js')
+const { mockStream, wait } = require('./common.js')
 
 test('create server', (t) => {
-  let server = createServer({})
+  const server = createServer({})
   t.true(server instanceof net.Server)
 })
 
 test('respond', async (t) => {
   await Connection.loaded
 
-  let server = createServer({
+  const server = createServer({
     info (message) {
       t.deepEqual(
         message.toJSON(),
@@ -23,7 +23,7 @@ test('respond', async (t) => {
     }
   })
 
-  let stream = mockStream()
+  const stream = mockStream()
   server.emit('connection', stream)
 
   stream.emit('data', fixtures.infoRequestBytes)
@@ -38,7 +38,7 @@ test('respond', async (t) => {
 test('respond async', async (t) => {
   await Connection.loaded
 
-  let server = createServer({
+  const server = createServer({
     async info (message) {
       t.deepEqual(
         message.toJSON(),
@@ -48,7 +48,7 @@ test('respond async', async (t) => {
     }
   })
 
-  let stream = mockStream()
+  const stream = mockStream()
   server.emit('connection', stream)
 
   stream.emit('data', fixtures.infoRequestBytes)
@@ -63,9 +63,9 @@ test('respond async', async (t) => {
 test('respond to non-implemented functions', async (t) => {
   await Connection.loaded
 
-  let server = createServer({})
+  const server = createServer({})
 
-  let stream = mockStream()
+  const stream = mockStream()
   server.emit('connection', stream)
 
   stream.emit('data', fixtures.infoRequestBytes)
@@ -79,9 +79,9 @@ test('respond to non-implemented functions', async (t) => {
 test('respond to special functions', async (t) => {
   await Connection.loaded
 
-  let server = createServer({})
+  const server = createServer({})
 
-  let stream = mockStream()
+  const stream = mockStream()
   server.emit('connection', stream)
 
   stream.emit('data', fixtures.flushRequestBytes)
@@ -97,13 +97,13 @@ test('respond to special functions', async (t) => {
 test('respond with callback error', async (t) => {
   await Connection.loaded
 
-  let server = createServer({
+  const server = createServer({
     info (message) {
       throw Error('test error')
     }
   })
 
-  let stream = mockStream()
+  const stream = mockStream()
   server.emit('connection', stream)
 
   stream.emit('data', fixtures.multiRequestBytes)
@@ -117,13 +117,13 @@ test('respond with callback error', async (t) => {
 test('respond with async callback error', async (t) => {
   await Connection.loaded
 
-  let server = createServer({
+  const server = createServer({
     async info (message) {
       throw Error('test error')
     }
   })
 
-  let stream = mockStream()
+  const stream = mockStream()
   server.emit('connection', stream)
 
   stream.emit('data', fixtures.multiRequestBytes)

@@ -1,8 +1,8 @@
-let test = require('ava')
-let createTempDir = require('tempy').directory
-let getPort = require('get-port')
-let tm = require('tendermint-node')
-let createAbciServer = require('..')
+const test = require('ava')
+const createTempDir = require('tempy').directory
+const getPort = require('get-port')
+const tm = require('tendermint-node')
+const createAbciServer = require('..')
 
 function startNode (home, ports) {
   return tm.node(home, {
@@ -13,16 +13,16 @@ function startNode (home, ports) {
 }
 
 test.beforeEach(async (t) => {
-  let home = createTempDir()
+  const home = createTempDir()
   await tm.init(home)
 
-  let ports = {
+  const ports = {
     p2p: await getPort(),
     rpc: await getPort(),
     abci: await getPort()
   }
 
-  let node = startNode(home, ports)
+  const node = startNode(home, ports)
 
   Object.assign(
     t.context,
@@ -35,27 +35,27 @@ test.afterEach((t) => {
 })
 
 test('app info resolves over RPC', async (t) => {
-  let { ports, node } = t.context
+  const { ports, node } = t.context
 
-  let info = {
+  const info = {
     data: 'test app',
     version: '1.2.3'
   }
-  let server = createAbciServer({
+  const server = createAbciServer({
     info: () => info
   })
   server.listen(ports.abci)
 
   await node.started()
 
-  let rpcResponse = await node.rpc.abciInfo()
+  const rpcResponse = await node.rpc.abciInfo()
   t.deepEqual(rpcResponse, { response: info })
 })
 
 test('large tx', async (t) => {
-  let { ports, node } = t.context
+  const { ports, node } = t.context
 
-  let server = createAbciServer({
+  const server = createAbciServer({
     info: () => ({
       data: 'test app',
       version: '1.2.3'
@@ -81,7 +81,7 @@ test('large tx', async (t) => {
 
   await node.started()
 
-  let res = await node.rpc.broadcastTxCommit({
+  const res = await node.rpc.broadcastTxCommit({
     tx: '0x' + Buffer.allocUnsafe(10e3).toString('hex')
   })
   t.falsy(res.check_tx.code)
@@ -92,8 +92,8 @@ test('reinitialization', async (t) => {
   let { ports, node, home } = t.context
 
   let lastBlockHeight, lastBlockAppHash
-  let hash = Buffer.alloc(32).fill(1)
-  let server = createAbciServer({
+  const hash = Buffer.alloc(32).fill(1)
+  const server = createAbciServer({
     info: () => ({
       lastBlockHeight,
       lastBlockAppHash
