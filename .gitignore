@@ -1,5 +1,4 @@
 node_modules/
 .nyc_output
 package-lock.json
-reform-js-abci-1.0.0.tgz
-package-lock.json
+*.tgz
